@@ -3,48 +3,52 @@ package com.example.tonydarko.ht2.ui;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ListView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.example.tonydarko.ht2.R;
 import com.example.tonydarko.ht2.adapters.MyAdapter;
 import com.example.tonydarko.ht2.model.Product;
+import com.example.tonydarko.ht2.utils.Constants;
 
 import java.util.LinkedList;
 import java.util.Random;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class MainActivity extends AppCompatActivity {
 
+    Unbinder unbinder;
     private MyAdapter myAdapter;
     private Random random = new Random();
-
-    private final int NUMBER = 50;
-    private final int SLEEP_TIME = 500;
-
-    private final int COUNT_BUYS = 2;
-    private final int MAXIMUM_PURCHASE = 10;
-    private final int NUMBER_OF_TYPES = 5;
-
     private int tempProductNumber;
+
+    @BindView(R.id.products_list)
+    RecyclerView recyclerView;
+
+    RecyclerView.LayoutManager layoutManager;
 
     private LinkedList<Integer> positions = new LinkedList<>();
     private LinkedList<Product> products = new LinkedList<>();
-    private int[] numbersBuyProducts = new int[COUNT_BUYS];
-    private int[] numberOfPurchased = new int[COUNT_BUYS];
-
+    private int[] numbersBuyProducts = new int[Constants.COUNT_BUYS];
+    private int[] numberOfPurchased = new int[Constants.COUNT_BUYS];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+       unbinder = ButterKnife.bind(this);
         for (int i = 0; i < 5; i++) {
-            products.add(new Product("product" + i, NUMBER));
+            products.add(new Product("product" + i, Constants.NUMBER));
             positions.add(i);
         }
+        layoutManager = new LinearLayoutManager(this);
 
-        ListView products_list = findViewById(R.id.products_list);
-        myAdapter = new MyAdapter(this, products);
-        products_list.setAdapter(myAdapter);
+        myAdapter = new MyAdapter(products, this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(myAdapter);
 
         repeatBuys();
     }
@@ -58,13 +62,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void countNumberOfPurchase(int countBuys) {
         for (int i = 0; i < countBuys; i++) {
-            if (i == COUNT_BUYS - 1) {
+            if (i == Constants.COUNT_BUYS - 1) {
                 tempProductNumber = countNumberOfAnotherProduct(numbersBuyProducts[0]);
             } else {
                 tempProductNumber = randomTypes();
             }
             numbersBuyProducts[i] = tempProductNumber;
-            numberOfPurchased[i] = purchaseAmount(MAXIMUM_PURCHASE);
+            numberOfPurchased[i] = purchaseAmount(Constants.MAXIMUM_PURCHASE);
         }
     }
 
@@ -94,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int randomTypes() {
-        int tempNumber = random.nextInt(NUMBER_OF_TYPES);
+        int tempNumber = random.nextInt(Constants.NUMBER_OF_TYPES);
         if (positions.contains(tempNumber)) {
             return tempNumber;
         } else return randomTypes();
@@ -104,15 +108,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            if (products.size() < COUNT_BUYS) {
-                countNumberOfPurchase(COUNT_BUYS - 1);
-            } else countNumberOfPurchase(COUNT_BUYS);
+            if (products.size() < Constants.COUNT_BUYS) {
+                countNumberOfPurchase(Constants.COUNT_BUYS - 1);
+            } else countNumberOfPurchase(Constants.COUNT_BUYS);
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Thread.sleep(SLEEP_TIME);
+                Thread.sleep(Constants.SLEEP_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -121,11 +125,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (products.size() < COUNT_BUYS) {
-                purchase(COUNT_BUYS - 1);
-            } else purchase(COUNT_BUYS);
+            if (products.size() < Constants.COUNT_BUYS) {
+                purchase(Constants.COUNT_BUYS - 1);
+            } else purchase(Constants.COUNT_BUYS);
 
             repeatBuys();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="wrap_content"
+    tools:context="ui.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PRODUCT"
-        android:id="@+id/product"
+        android:id="@+id/tv_product"
         android:textSize="24dp"
         android:layout_margin="40dp" />
 
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="count"
-        android:id="@+id/count"
+        android:id="@+id/tv_count"
         android:textSize="24dp"
         android:layout_margin="40dp" />
 </LinearLayout>

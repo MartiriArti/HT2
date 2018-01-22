@@ -16,4 +16,12 @@ public class Product {
     public int getCount() {
         return count;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 }
